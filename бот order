@@ -1,0 +1,31 @@
+ from aiogram import Bot, Dispatcher, types
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.utils import executor
+
+TOKEN = 7524130982:AAFDdOSjby1C8uUdE_rgumcKrP8ljXvt4Vw
+ 
+bot = Bot(token=TOKEN)
+dp = Dispatcher(bot)
+
+# Создаем клавиатуру
+keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
+button1 = KeyboardButton("📩 Оформить заказ")
+button2 = KeyboardButton("ℹ️ Вопросы")
+keyboard.add(button1, button2)
+
+@dp.message_handler(commands=["start"])
+async def start(message: types.Message):
+      await message.answer("Привет !
+Выберите действие:", reply_markup=keyboard)
+
+@dp.message_handler(lambda message: message.text == "📩 Оформить заказ")
+async def order(message: types.Message):
+    await message.answer("Введите ваш заказ:")
+
+@dp.message_handler()
+async def receive_order(message: types.Message):
+    owner_id = 5096594051
+    await bot.send_message(owner_id, f"📩 Новый заказ:\n{message.text}")
+    await message.answer("✅ Ваш заказ принят!")
+
+executor.start_polling(dp)
